@@ -4,6 +4,7 @@ import { ConduitRouteActions, ConduitRouteParameters } from '@conduitplatform/gr
 
 export function getGetSecurityClientsRoute() {
   const { clientSecret, ...returnTypeFields } = Client.getInstance().fields;
+  const testUnusedVar = 5;
   return new ConduitRoute(
     {
       path: '/security/client',
