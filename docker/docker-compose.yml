@@ -335,7 +335,7 @@ services:
         aliases:
           - conduit-prometheus
     volumes:
-      - ./configs/prometheus:/etc/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - conduit-prometheus:/prometheus
 
 #  loki:
@@ -349,7 +349,7 @@ services:
 #        aliases:
 #          - conduit-loki
 #    volumes:
-#      - ./configs/loki/loki-config.yml:/etc/loki/loki-config.yaml
+#      - ./loki-config.yml:/etc/loki/loki-config.yaml
 #      - conduit-loki:/loki
 
 # Persistent Volumes
