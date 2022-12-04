@@ -16,9 +16,11 @@ import {
 } from '../protoUtils/grpc_health_check';
 import { GrpcCallback } from '../interfaces';
 import { ServerWritableStream } from '@grpc/grpc-js';
+import { CompatServiceDefinition } from 'nice-grpc/lib/service-definitions';
 
 export abstract class ConduitServiceModule {
   protected readonly _moduleName: string;
+  protected readonly _serviceDefinition?: CompatServiceDefinition;
   protected _serviceName?: string;
   protected _address!: string; // external address:port of service (LoadBalancer)
   protected _port!: string; // port to bring up gRPC service
@@ -27,8 +29,9 @@ export abstract class ConduitServiceModule {
   private _serviceHealthState: HealthCheckStatus = HealthCheckStatus.SERVING; // default for health-agnostic modules
   protected readonly events: EventEmitter = new EventEmitter();
 
-  protected constructor(moduleName: string) {
+  protected constructor(moduleName: string, serviceDefinition?: CompatServiceDefinition) {
     this._moduleName = camelCase(moduleName);
+    this._serviceDefinition = serviceDefinition;
   }
 
   get healthState() {

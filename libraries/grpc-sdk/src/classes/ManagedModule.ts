@@ -38,6 +38,10 @@ export abstract class ManagedModule<T> extends ConduitServiceModule {
     return this._address;
   }
 
+  get serviceDefinition() {
+    return this._serviceDefinition;
+  }
+
   /**
    * This is the first function triggered on module spin up.
    * @param grpcSdk {ConduitGrpcSdk}

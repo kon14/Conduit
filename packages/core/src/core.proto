@@ -103,6 +103,7 @@ message RegisterModuleRequest {
   ConduitManifest manifest = 1;
   string url = 3;
   int32 healthStatus = 4; // [0, 1, 2]
+  optional string serviceDefinition = 5;
 }
 
 message GetConfigRequest {

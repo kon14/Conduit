@@ -40,6 +40,7 @@ export class ModuleManager<T> {
       await this.grpcSdk.config.registerModule(
         this.module.address,
         this.module.healthState,
+        this.module.serviceDefinition,
       );
     } catch (err) {
       ConduitGrpcSdk.Logger.error('Failed to initialize server');

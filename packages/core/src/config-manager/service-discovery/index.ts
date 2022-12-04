@@ -297,10 +297,18 @@ export class ServiceDiscovery {
     moduleManifest: ConduitManifest,
     moduleUrl: string,
     healthStatus?: HealthCheckStatus,
+    serviceDefinition?: string,
   ) {
     const { moduleName, moduleVersion } = moduleManifest;
+    if (serviceDefinition) {
+      const definition = JSON.parse(serviceDefinition);
+      await this.grpcSdk.importDynamicModuleDefinition(
+        moduleManifest.moduleName,
+        definition,
+      );
+    }
     this.grpcSdk.createModuleClient(moduleName, moduleUrl);
-    if (!healthStatus) {
+    if (healthStatus === undefined) {
       const healthResponse = await this.grpcSdk.checkServiceHealth(moduleUrl);
       if (healthResponse === HealthCheckStatus.SERVICE_UNKNOWN) {
         throw new Error('Failed to register unresponsive module');
@@ -362,7 +370,13 @@ export class ServiceDiscovery {
       moduleManifest,
       call.request.url,
       call.request.healthStatus as HealthCheckStatus,
-    );
+      call.request.serviceDefinition,
+    ).catch(err => {
+      return callback({
+        code: status.INTERNAL,
+        message: err.message,
+      });
+    });
     this.updateRedisState(moduleManifest, call.request.url, instance);
     this.publishModuleData(
       'serving-modules-update',

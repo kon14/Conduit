@@ -454,11 +454,7 @@ export default class ConduitGrpcSdk {
   }
 
   createModuleClient(moduleName: string, moduleUrl: string) {
-    if (
-      this._modules[moduleName] ||
-      (!this._availableModules[moduleName] && !this._dynamicModules[moduleName])
-    )
-      return;
+    if (this._modules[moduleName] || moduleName === 'core') return;
     if (this._availableModules[moduleName]) {
       // ConduitGrpcSdk.Logger.log(`Creating gRPC client for ${moduleName}`);
       this._modules[moduleName] = new this._availableModules[moduleName](
@@ -475,6 +471,8 @@ export default class ConduitGrpcSdk {
         this._grpcToken,
       );
       this._modules[moduleName].initializeClient(this._dynamicModules[moduleName]);
+    } else {
+      throw new Error(`No service definition available for ${moduleName}`);
     }
   }
 
@@ -482,8 +480,8 @@ export default class ConduitGrpcSdk {
     return checkServiceHealth(this.name, moduleUrl, service, this._grpcToken);
   }
 
-  moduleClient(name: string, type: CompatServiceDefinition): void {
-    this._dynamicModules[name] = type;
+  importDynamicModuleDefinition(name: string, definition: CompatServiceDefinition): void {
+    this._dynamicModules[name] = definition;
   }
 
   getModule<T extends CompatServiceDefinition>(

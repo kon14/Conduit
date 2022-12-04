@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { CompatServiceDefinition } from 'nice-grpc/lib/service-definitions';
 import { ConduitModule } from '../../classes/ConduitModule';
 import { HealthCheckStatus } from '../../types';
 import {
@@ -67,11 +68,13 @@ export class Config extends ConduitModule<typeof ConfigDefinition> {
   registerModule(
     url: string,
     healthStatus: Omit<HealthCheckStatus, HealthCheckStatus.SERVICE_UNKNOWN>,
+    serviceDefinition?: CompatServiceDefinition,
   ) {
     const request: RegisterModuleRequest = {
       manifest: ManifestManager.getInstance().manifest,
       url: url.toString(),
       healthStatus: healthStatus as number,
+      ...(serviceDefinition && { serviceDefinition: JSON.stringify(serviceDefinition) }),
     };
     const self = this;
     return this.serviceClient!.registerModule(request).then(() => {
