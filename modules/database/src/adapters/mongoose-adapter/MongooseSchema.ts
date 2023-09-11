@@ -142,7 +142,15 @@ export class MongooseSchema extends SchemaAdapter<Model<any>> {
     if (options?.populate !== undefined && options?.populate !== null) {
       finalQuery = this.populate(finalQuery, options?.populate);
     }
-    return finalQuery.lean().exec();
+    const res = await finalQuery.lean().exec();
+    if (res) {
+      return Promise.resolve(res);
+    } else {
+      const id = (filterQuery as { _id: string })._id;
+      throw new Error(
+        `${this.schema.name} schema doesn't contain a record for ID: ${id}`,
+      );
+    }
   }
 
   async updateOne(
@@ -172,7 +180,15 @@ export class MongooseSchema extends SchemaAdapter<Model<any>> {
     if (options?.populate !== undefined && options?.populate !== null) {
       finalQuery = this.populate(finalQuery, options?.populate);
     }
-    return finalQuery.lean().exec();
+    const res = await finalQuery.lean().exec();
+    if (res) {
+      return Promise.resolve(res);
+    } else {
+      const id = (filterQuery as { _id: string })._id;
+      throw new Error(
+        `${this.schema.name} schema doesn't contain a record for ID: ${id}`,
+      );
+    }
   }
 
   async updateMany(
