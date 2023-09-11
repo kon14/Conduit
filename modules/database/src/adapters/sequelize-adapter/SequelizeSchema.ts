@@ -140,6 +140,11 @@ export class SequelizeSchema extends SchemaAdapter<ModelStatic<any>> {
         nest: true,
         transaction: t,
       });
+      if (!parentDoc) {
+        throw new Error(
+          `${this.schema.name} schema doesn't contain a record for ID: ${id}`,
+        );
+      }
       if (parsedQuery.hasOwnProperty('$inc')) {
         const inc = parsedQuery['$inc'];
         for (const key in inc) {
