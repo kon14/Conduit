@@ -134,7 +134,14 @@ export class SequelizeSchema extends SchemaAdapter<ModelStatic<any>> {
       false,
       options?.userId,
       options?.scope,
-    ).then(r => r!._id);
+    ).then(r => {
+      if (!r) {
+        throw new Error(
+          `Record '${id}' doesn't exist or isn't modifiable by user in schema ${this.schema.name}`,
+        );
+      }
+      return r._id;
+    });
     try {
       const parentDoc = await this.model.findByPk(parsedId, {
         nest: true,
