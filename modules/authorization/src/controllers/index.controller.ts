@@ -84,6 +84,45 @@ export class IndexController {
     }
   }
 
+  // async constructRelationIndexes(subject: string, relation: string, object: string) {
+  //   // TODO
+  //   const objectDefinition = (await ResourceDefinition.getInstance().findOne({
+  //     name: object.split(':')[0],
+  //   }))!;
+  //   const permissions = Object.keys(objectDefinition.permissions);
+  //   const obj = [];
+  //   for (const permission of permissions) {
+  //     const roles = objectDefinition.permissions[permission];
+  //     for (const role of roles) {
+  //       if (role.indexOf('->') === -1) {
+  //         obj.push({
+  //           subject: object + '#' + permission,
+  //           entity: role === '*' ? `*` : `${object}#${role}`,
+  //         });
+  //       } else if (role !== '*') {
+  //         const [relatedSubject, action] = role.split('->');
+  //         if (relation !== relatedSubject) continue;
+  //         const possibleConnections = await ObjectIndex.getInstance().findMany({
+  //           subject: `${subject}#${action}`,
+  //         });
+  //         for (const connection of possibleConnections) {
+  //           obj.push({ subject: object + '#' + permission, entity: connection.entity });
+  //         }
+  //       }
+  //     }
+  //   }
+  //   const indexes = await ObjectIndex.getInstance().findMany({
+  //     $and: [
+  //       { subject: { $in: obj.map(i => i.subject) } },
+  //       { entity: { $in: obj.map(i => i.entity) } },
+  //     ],
+  //   });
+  //   const toCreate = obj.filter(
+  //     i => !indexes.find(j => j.subject === i.subject && j.entity === i.entity),
+  //   );
+  //   await ObjectIndex.getInstance().createMany(toCreate);
+  // }
+
   async removeRelation(subject: string, relation: string, object: string) {
     // delete applicable actor indexes
     await ActorIndex.getInstance().deleteMany({

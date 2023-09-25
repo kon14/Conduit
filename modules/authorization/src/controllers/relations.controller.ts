@@ -121,9 +121,12 @@ export class RelationsController {
       };
     });
     await ActorIndex.getInstance().createMany(toCreate);
+    // TODO
     await Promise.all(
-      relations.map(r =>
-        this.indexController.constructRelationIndex(r.subject, r.relation, r.resource),
+      relations.map(
+        r =>
+          this.indexController.constructRelationIndex(r.subject, r.relation, r.resource),
+        // this.indexController.constructRelationIndexes(r.subject, r.relation, r.resource),
       ),
     );
     return relationResource;
