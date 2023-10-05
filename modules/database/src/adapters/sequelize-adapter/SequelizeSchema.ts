@@ -19,7 +19,7 @@ import { extractRelations, getTransactionAndParsedQuery, sqlTypesProcess } from 
 import { SequelizeAdapter } from './index';
 import ConduitGrpcSdk, { Indexable } from '@conduitplatform/grpc-sdk';
 import { parseQuery, parseCreateRelations } from './parser';
-import { isNil } from 'lodash';
+import { isEmpty, isNil, isObject } from 'lodash';
 import { processCreateQuery, unwrap } from './utils/pathUtils';
 import {
   constructRelationInclusion,
@@ -134,7 +134,12 @@ export class SequelizeSchema extends SchemaAdapter<ModelStatic<any>> {
       false,
       options?.userId,
       options?.scope,
-    ).then(r => r!._id);
+    ).then(r => {
+      if (!r) {
+        throw new Error(`Record '${id}' doesn't exist or can't be modified by user.`);
+      }
+      return r._id;
+    });
     try {
       const parentDoc = await this.model.findByPk(parsedId, {
         nest: true,
@@ -457,15 +462,23 @@ export class SequelizeSchema extends SchemaAdapter<ModelStatic<any>> {
       this,
       this.parseStringToQuery(query),
     );
-    const parsedFilter = await this.getAuthorizedQuery(
+    let parsedFilter = await this.getAuthorizedQuery(
       'delete',
       filter,
       true,
       options?.userId,
       options?.scope,
     );
-    if (isNil(parsedFilter)) {
-      return [];
+    // if (isNil(parsedFilter) && !isNil(filter)) {
+    //   return { deletedCount: 0 }
+    // }
+    if (parsedFilter === null) {
+      // if (isEmpty(query)) {
+      //   // allow delete-all operations
+      //   parsedFilter = {};
+      // } else {
+      return { deletedCount: 0 };
+      // }
     }
     return this.model
       .findAll({
@@ -498,6 +511,9 @@ export class SequelizeSchema extends SchemaAdapter<ModelStatic<any>> {
       options?.userId,
       options?.scope,
     );
+    if (parsedFilter === null && parsedFilter !== filter) {
+      return { deletedCount: 0 };
+    }
     return this.model
       .findOne({
         where: parsedFilter!,
