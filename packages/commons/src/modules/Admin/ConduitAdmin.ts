@@ -1,7 +1,7 @@
 import { ConduitRoute } from '@conduitplatform/hermes';
-import { ConduitCommons } from '../../index';
-import convict from 'convict';
 import { GrpcServer } from '@conduitplatform/module-tools';
+import type convict from 'convict';
+import { ConduitCommons } from '../../index';
 
 export abstract class IConduitAdmin {
   protected constructor(protected readonly commons: ConduitCommons) {}
