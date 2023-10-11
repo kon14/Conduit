@@ -45,7 +45,6 @@
     "nodemailer-sendgrid": "^1.0.3"
   },
   "devDependencies": {
-    "@types/convict": "^6.1.1",
     "@types/lodash": "^4.14.192",
     "@types/mailgun-js": "^0.22.13",
     "@types/mandrill-api": "^1.0.30",
